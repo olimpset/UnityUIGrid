@@ -8,13 +8,13 @@ using System.Linq;
 public class UIGrid : MonoBehaviour
 {
     [SerializeField]
-    private bool _dotted;
+    private bool _dotted = false;
     [SerializeField]
-    private bool _goldenRatio;
+    private bool _goldenRatio = true;
     [SerializeField]
-    private Color _gridColor;
+    private Color _gridColor = Color.white;
     [SerializeField]
-    private Color _intersectionColor;
+    private Color _intersectionColor = Color.grey;
     [SerializeField]
     private float _snapStrenght;
     [SerializeField]
@@ -40,7 +40,6 @@ public class UIGrid : MonoBehaviour
         public Vector3 end;
         public bool horizontal;
     }
-
 
     private void OnDrawGizmos()
     {
@@ -69,8 +68,7 @@ public class UIGrid : MonoBehaviour
 
         Handles.color = _intersectionColor;
         for (int i = 0; i < _intersections.Count; i++)
-        {
-
+        { 
             Handles.CubeCap(0, _intersections[i], Quaternion.identity, 0.25f);
         }
     }
@@ -79,7 +77,7 @@ public class UIGrid : MonoBehaviour
         _lines = new List<Line>();
         _intersections = new List<Vector3>();
         GetCorners();
-        if(_goldenRatio) { GoldenRatio(); }
+        if (_goldenRatio) { GoldenRatio(); }
         else { Grid(); }
         DisplayIntersection();
 
@@ -121,7 +119,7 @@ public class UIGrid : MonoBehaviour
         }
     }
 
-    void AddNewLine(float basenumber, float multiplier, bool horizontal, bool goldenratio = false, float ratioNumber = 0, bool inverted = false)
+    void AddNewLine(float basenumber, float multiplier, bool horizontal, bool inverted = false)
     {
         Line newLine = new Line();
         newLine.horizontal = horizontal;
@@ -134,16 +132,10 @@ public class UIGrid : MonoBehaviour
         newLine.end = Vector3.Lerp(c3, c4, 1 / basenumber * multiplier);
 
 
-        if (goldenratio)
+        if (inverted)
         {
-            newLine.start = Vector3.Lerp(c1, c2, ratioNumber);
-            newLine.end = Vector3.Lerp(c3, c4, ratioNumber);
-        }
-
-        if (goldenratio && inverted)
-        {
-            newLine.start = Vector3.Lerp(c2, c1, ratioNumber);
-            newLine.end = Vector3.Lerp(c4, c3, ratioNumber);
+            newLine.start = Vector3.Lerp(c2, c1, 1 / basenumber * multiplier);
+            newLine.end = Vector3.Lerp(c4, c3, 1 / basenumber * multiplier);
         }
         _lines.Add(newLine);
     }
@@ -160,33 +152,12 @@ public class UIGrid : MonoBehaviour
     void GoldenRatio()
     {
         float fulllenght = 1;
-        for (int i = 1; i < _gridAmount; i++)
+        for (int i = 0; i < _gridAmount; i++)
         {
-            //Vertical +
-            AddNewLine(0f, 0f, true, true, 0.6180339887f * fulllenght);
-            fulllenght = fulllenght * 0.6180339887f;
-        }
-        fulllenght = 1;
-        for (int i = 1; i < _gridAmount; i++)
-        {
-            //Vertical -
-            AddNewLine(0f, 0f, true, true, 0.6180339887f * fulllenght, true);
-            fulllenght = fulllenght * 0.6180339887f;
-        }
-
-        fulllenght = 1;
-        for (int i = 1; i < _gridAmount; i++)
-        {
-            //Horizontal +
-            AddNewLine(0f, 0f, false, true, 0.6180339887f * fulllenght);
-            fulllenght = fulllenght * 0.6180339887f;
-        }
-
-        fulllenght = 1;
-        for (int i = 1; i < _gridAmount; i++)
-        {
-            //Horizontal -
-            AddNewLine(0f, 0f, false, true, 0.6180339887f * fulllenght, true);
+            AddNewLine(0.6180339887f, fulllenght, true);
+            AddNewLine(0.6180339887f, fulllenght, true, true);
+            AddNewLine(0.6180339887f, fulllenght, false);
+            AddNewLine(0.6180339887f, fulllenght, false, true);
             fulllenght = fulllenght * 0.6180339887f;
         }
     }
