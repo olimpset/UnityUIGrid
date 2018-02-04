@@ -4,26 +4,29 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 
+[RequireComponent(typeof(RectTransform))]
 public class UIGrid : MonoBehaviour
 {
     [SerializeField]
     private bool _dotted;
     [SerializeField]
-    private Color _color;
+    private bool _goldenRatio;
     [SerializeField]
-    private float _sticky;
+    private Color _gridColor;
     [SerializeField]
-    private float _gridAmount;
+    private Color _intersectionColor;
+    [SerializeField]
+    private float _snapStrenght;
+    [SerializeField]
+    private int _gridAmount;
 
 
-    private float goldenratio = (1 + Mathf.Sqrt(5)) / 2;
     private Vector3[] corners = new Vector3[4];
-
     private List<Line> _lines = new List<Line>();
     private List<Vector3> _intersections = new List<Vector3>();
-
     private GameObject _selectedGameObject;
 
+    ///   Corners
     ///  1 ------ 2
     ///  -        -
     ///  -        -
@@ -42,7 +45,7 @@ public class UIGrid : MonoBehaviour
     private void OnDrawGizmos()
     {
         GetSelectedGameObject();
-        if (_selectedGameObject != null && !_selectedGameObject.GetComponent<Canvas>())
+        if (_selectedGameObject != null && !_selectedGameObject.GetComponent<Canvas>() && _selectedGameObject.transform.parent == transform)
         {
             FindIntersection();
         }
@@ -56,7 +59,7 @@ public class UIGrid : MonoBehaviour
 
     private void DrawGrid()
     {
-        Handles.color = _color;
+        Handles.color = _gridColor;
 
         for (int i = 0; i < _lines.Count; i++)
         {
@@ -64,9 +67,11 @@ public class UIGrid : MonoBehaviour
             else Handles.DrawLine(_lines[i].start, _lines[i].end);
         }
 
+        Handles.color = _intersectionColor;
         for (int i = 0; i < _intersections.Count; i++)
         {
-            Handles.CubeCap(0, _intersections[i], Quaternion.identity, 0.75f);
+
+            Handles.CubeCap(0, _intersections[i], Quaternion.identity, 0.25f);
         }
     }
     private void OnDrawGizmosSelected()
@@ -74,7 +79,8 @@ public class UIGrid : MonoBehaviour
         _lines = new List<Line>();
         _intersections = new List<Vector3>();
         GetCorners();
-        Grid();
+        if(_goldenRatio) { GoldenRatio(); }
+        else { Grid(); }
         DisplayIntersection();
 
     }
@@ -89,7 +95,7 @@ public class UIGrid : MonoBehaviour
     {
         for (int i = 0; i < _intersections.Count; i++)
         {
-            if (Vector3.Distance(_selectedGameObject.transform.position, _intersections[i]) < _sticky)
+            if (Vector3.Distance(_selectedGameObject.transform.position, _intersections[i]) < _snapStrenght)
                 _selectedGameObject.transform.position = _intersections[i];
         }
     }
