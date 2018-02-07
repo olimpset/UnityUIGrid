@@ -7,24 +7,20 @@ using System.Linq;
 [RequireComponent(typeof(RectTransform))]
 public class UIGrid : MonoBehaviour
 {
-    [SerializeField]
-    private bool _dotted = false;
-    [SerializeField]
-    private bool _goldenRatio = true;
-    [SerializeField]
-    private Color _gridColor = Color.white;
-    [SerializeField]
-    private Color _intersectionColor = Color.grey;
-    [SerializeField]
-    private float _snapStrenght;
-    [SerializeField]
-    private int _gridAmount;
-
+    public bool _dotted = false;
+    public bool _goldenRatio = true;
+    public Color _gridColor = Color.white;
+    public Color _intersectionColor = Color.grey;
+    public float _snapStrenght;
+    public int _gridAmount;
+    public bool _snap;
+    
 
     private Vector3[] corners = new Vector3[4];
     private List<Line> _lines = new List<Line>();
     private List<Vector3> _intersections = new List<Vector3>();
     private GameObject _selectedGameObject;
+    public float _rotationalOffset;
 
     ///   Corners
     ///  1 ------ 2
@@ -44,7 +40,7 @@ public class UIGrid : MonoBehaviour
     private void OnDrawGizmos()
     {
         GetSelectedGameObject();
-        if (_selectedGameObject != null && !_selectedGameObject.GetComponent<Canvas>() && _selectedGameObject.transform.parent == transform)
+        if (_snap && _selectedGameObject != null && !_selectedGameObject.GetComponent<Canvas>() && _selectedGameObject.transform.parent == transform)
         {
             FindIntersection();
         }
@@ -62,14 +58,14 @@ public class UIGrid : MonoBehaviour
 
         for (int i = 0; i < _lines.Count; i++)
         {
-            if (_dotted) Handles.DrawDottedLine(_lines[i].start, _lines[i].end, 3f);
+            if (_dotted) Handles.DrawDottedLine(_lines[i].start, _lines[i].end, 2f);
             else Handles.DrawLine(_lines[i].start, _lines[i].end);
         }
 
         Handles.color = _intersectionColor;
         for (int i = 0; i < _intersections.Count; i++)
         { 
-            Handles.CubeCap(0, _intersections[i], Quaternion.identity, 0.25f);
+            Handles.DotHandleCap(0, _intersections[i], Quaternion.identity, 0.12f, EventType.Repaint);
         }
     }
     private void OnDrawGizmosSelected()
