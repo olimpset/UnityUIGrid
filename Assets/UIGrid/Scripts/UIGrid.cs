@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +11,19 @@ public class UIGrid : MonoBehaviour
     public bool _goldenRatio = true;
     public Color _gridColor = Color.white;
     public Color _intersectionColor = Color.grey;
-    public float _snapStrenght;
-    public int _gridAmount;
-    public bool _snap;
-    
+    public float _snapStrenght = 10;
+    public int _gridAmount = 8;
+    public bool _snap = true;
+    public float interSectionSize = 0.2f;
+
+
 
     private Vector3[] corners = new Vector3[4];
     private List<Line> _lines = new List<Line>();
     private List<Vector3> _intersections = new List<Vector3>();
     private GameObject _selectedGameObject;
-    public float _rotationalOffset;
 
-    ///   Corners
+    ///    Corners
     ///  1 ------ 2
     ///  -        -
     ///  -        -
@@ -39,17 +40,15 @@ public class UIGrid : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        GetSelectedGameObject();
-        if (_snap && _selectedGameObject != null && !_selectedGameObject.GetComponent<Canvas>() && _selectedGameObject.transform.parent == transform)
-        {
-            FindIntersection();
-        }
         DrawGrid();
-    }
-
-    private void OnEnable()
-    {
-        GetCorners();
+        if (Selection.activeGameObject != null)
+        {
+            GetSelectedGameObject();
+            if (_snap && _selectedGameObject != null && !_selectedGameObject.GetComponent<Canvas>() && _selectedGameObject.transform.parent == transform)
+            {
+                FindIntersection();
+            }
+        }
     }
 
     private void DrawGrid()
@@ -64,19 +63,9 @@ public class UIGrid : MonoBehaviour
 
         Handles.color = _intersectionColor;
         for (int i = 0; i < _intersections.Count; i++)
-        { 
-            Handles.DotHandleCap(0, _intersections[i], Quaternion.identity, 0.12f, EventType.Repaint);
+        {
+            Handles.DotHandleCap(0, _intersections[i], Quaternion.identity, interSectionSize, EventType.Repaint);
         }
-    }
-    private void OnDrawGizmosSelected()
-    {
-        _lines = new List<Line>();
-        _intersections = new List<Vector3>();
-        GetCorners();
-        if (_goldenRatio) { GoldenRatio(); }
-        else { Grid(); }
-        DisplayIntersection();
-
     }
 
     void GetCorners()
@@ -99,7 +88,7 @@ public class UIGrid : MonoBehaviour
         _selectedGameObject = Selection.activeGameObject;
     }
 
-    void DisplayIntersection()
+    void CalculateIntersection()
     {
         var horizontalLines = _lines.Where(x => x.horizontal).ToList();
         var verticalLines = _lines.Where(x => !x.horizontal).ToList();
@@ -136,17 +125,20 @@ public class UIGrid : MonoBehaviour
         _lines.Add(newLine);
     }
 
-    void Grid()
+    public void Grid()
     {
+        CleanCanvas();
         for (int i = 1; i < _gridAmount; i++)
         {
             AddNewLine(_gridAmount, i, true);
             AddNewLine(_gridAmount, i, false);
         }
+        CalculateIntersection();
     }
 
-    void GoldenRatio()
+    public void GoldenRatio()
     {
+        CleanCanvas();
         float fulllenght = 1;
         for (int i = 0; i < _gridAmount; i++)
         {
@@ -156,6 +148,7 @@ public class UIGrid : MonoBehaviour
             AddNewLine(0.6180339887f, fulllenght, false, true);
             fulllenght = fulllenght * 0.6180339887f;
         }
+        CalculateIntersection();
     }
 
 
@@ -183,4 +176,12 @@ public class UIGrid : MonoBehaviour
 
         return true;
     }
+
+    private void CleanCanvas()
+    {
+        GetCorners();
+        _lines = new List<Line>();
+        _intersections = new List<Vector3>();
+    }
 }
+#endif

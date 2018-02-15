@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
-//[CanEditMultipleObjects]
 [CustomEditor(typeof(UIGrid))]
 public class LevelScriptEditor : Editor
 {
@@ -28,8 +27,24 @@ public class LevelScriptEditor : Editor
         uiGrid._intersectionColor = EditorGUILayout.ColorField("Intersection Color", uiGrid._intersectionColor);
         EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+        uiGrid.interSectionSize = EditorGUILayout.FloatField("Intersection Size", uiGrid.interSectionSize);
+        EditorGUILayout.EndHorizontal();
 
-        uiGrid._rotationalOffset = EditorGUILayout.FloatField("Intersection Color", uiGrid._rotationalOffset);
+        EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+        if (GUILayout.Button("Generate Grid", EditorStyles.toolbarButton))
+        {
+            if (uiGrid._goldenRatio)
+            {
+                uiGrid.GoldenRatio();
+            }
+            else
+            {
+                uiGrid.Grid();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
     }
 }
+#endif
