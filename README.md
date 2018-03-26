@@ -1,6 +1,8 @@
 # UnityUIGrid
 
-Simple UI grid  for snapping UI elements. Currently supported grids: Golden ratio and basic square grid.
+**UnityUIGrid is a simple script which enables a regular square grid or a phi grid (based on the [olden ratio] https://en.wikipedia.org/wiki/Golden_ratio)). The grid supports snapping, which can help you build your UI.**
 
-![Golden Ratio](https://i.imgur.com/GC8uGU8.png)
-![Rule of Thirds](https://i.imgur.com/m6pMPTv.png)
+# Screenshots
+![Golden ratio](https://i.imgur.com/1tBlOuZ.png)
+![Square grid](https://i.imgur.com/i0iU5eH.png)
+![Rule of thirds](https://i.imgur.com/mvxcX2p.png)
