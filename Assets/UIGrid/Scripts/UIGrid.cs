@@ -16,8 +16,6 @@ public class UIGrid : MonoBehaviour
     public bool _snap = true;
     public float interSectionSize = 0.2f;
 
-
-
     private Vector3[] corners = new Vector3[4];
     private List<Line> _lines = new List<Line>();
     private List<Vector3> _intersections = new List<Vector3>();
@@ -88,7 +86,7 @@ public class UIGrid : MonoBehaviour
         _selectedGameObject = Selection.activeGameObject;
     }
 
-    void CalculateIntersection()
+    void CalculateIntersections()
     {
         var horizontalLines = _lines.Where(x => x.horizontal).ToList();
         var verticalLines = _lines.Where(x => !x.horizontal).ToList();
@@ -133,7 +131,7 @@ public class UIGrid : MonoBehaviour
             AddNewLine(_gridAmount, i, true);
             AddNewLine(_gridAmount, i, false);
         }
-        CalculateIntersection();
+        CalculateIntersections();
     }
 
     public void GoldenRatio()
@@ -148,7 +146,7 @@ public class UIGrid : MonoBehaviour
             AddNewLine(0.6180339887f, fulllenght, false, true);
             fulllenght = fulllenght * 0.6180339887f;
         }
-        CalculateIntersection();
+        CalculateIntersections();
     }
 
 
