@@ -1,6 +1,13 @@
 # UnityUIGrid
 
-**UnityUIGrid is a simple script which enables a regular square grid or a phi grid (based on the Golden ratio). The grid supports snapping, which can help you build your UI.**
+UnityUIGrid is a simple script using [Setchi's LineSegmentsIntersection](https://github.com/setchi/Unity-LineSegmentsIntersection) to enable a regular square grid or a phi grid (based on the Golden ratio). Once added to the canvas, all children of that canvas can be snapped onto intersections.
+
+# Features
+- Multiple grids (Golden Ratio, square grids & Rule of Thirds)
+- Snapping
+- Responsive to canvas size
+
+
 
 # Screenshots
 ![Golden ratio](https://i.imgur.com/1tBlOuZ.png)
